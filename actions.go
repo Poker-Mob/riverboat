@@ -337,9 +337,7 @@ func toggleReady(g *Game, pn uint, data uint) error {
 	}
 
 	if pn == g.dealerNum {
-		for !(g.players[g.dealerNum].Ready) {
-			g.dealerNum = g.dealerNum + 1
-		}
+		g.ensureValidDealer()
 	}
 
 	if g.getStage() == PreDeal {
@@ -348,5 +346,21 @@ func toggleReady(g *Game, pn uint, data uint) error {
 
 	p.Left = false
 
+	return nil
+}
+
+func Start(g *Game, pn uint, data uint) error {
+	g.mtx.Lock()
+	defer g.mtx.Unlock()
+	return start(g, pn, data)
+}
+
+func start(g *Game, pn uint, data uint) error {
+	if g.readyCount() < 2 {
+		return ErrIllegalAction
+	}
+
+	g.ensureValidDealer()
+	g.updateBlindNums()
 	return nil
 }

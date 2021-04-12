@@ -223,11 +223,15 @@ func (g *Game) resetForNextHand() {
 	}
 
 	g.dealerNum = (g.dealerNum + 1) % uint(len(g.players))
+	g.ensureValidDealer()
+
+	g.setStageAndBetting(PreDeal, false)
+}
+
+func (g *Game) ensureValidDealer() {
 	for !g.players[g.dealerNum].Ready {
 		g.dealerNum = (g.dealerNum + 1) % uint(len(g.players))
 	}
-
-	g.setStageAndBetting(PreDeal, false)
 }
 
 func (g *Game) updateRoundInfo() {
