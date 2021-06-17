@@ -36,6 +36,7 @@ type GameView struct {
 	UTGNum         uint
 	SBNum          uint
 	BBNum          uint
+	CalledNum      uint
 	CommunityCards []Card
 	Stage          GameStage
 	Betting        bool
@@ -71,6 +72,7 @@ func (g *Game) copyToView() *GameView {
 		Pots:           copyPots(g.pots),
 		MinRaise:       g.minRaise,
 		ReadyCount:     g.readyCount(),
+		CalledNum:      g.calledNum,
 	}
 
 	return view
@@ -108,6 +110,7 @@ func (g *Game) FillFromView(gv *GameView) {
 	g.pots = copyPots(gv.Pots)
 	g.minRaise = gv.MinRaise
 	g.rand = rand.New(rand.NewSource(g.config.Seed))
+	g.calledNum = gv.CalledNum
 }
 
 // GeneratePlayerView is primarily for creating a view that can be serialized for delivery to a specific player
@@ -143,7 +146,6 @@ func (g *Game) GeneratePlayerView(pn uint) *GameView {
 		if p.In {
 			inCount++
 		}
-
 	}
 
 	// If in a heads-up situation
@@ -156,7 +158,6 @@ func (g *Game) GeneratePlayerView(pn uint) *GameView {
 	}
 
 	if g.getStage() == PreDeal && inCount > 1 {
-
 		showCards(g.calledNum)
 		_, scoreToBeat := BestFiveOfSeven(
 			g.players[g.calledNum].Cards[0],
