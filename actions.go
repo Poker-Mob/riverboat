@@ -320,8 +320,9 @@ func ToggleReady(g *Game, pn uint, data uint) error {
 
 func toggleReady(g *Game, pn uint, data uint) error {
 	p := g.getPlayer(pn)
+	stage := g.getStage()
 
-	if p.In {
+	if stage != PreDeal && p.In {
 		return ErrIllegalAction
 	}
 
@@ -340,7 +341,7 @@ func toggleReady(g *Game, pn uint, data uint) error {
 		g.ensureValidDealer()
 	}
 
-	if g.getStage() == PreDeal {
+	if stage == PreDeal {
 		g.updateBlindNums()
 	}
 
