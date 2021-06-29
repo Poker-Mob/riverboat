@@ -52,7 +52,6 @@ func Bet(g *Game, pn uint, data uint) error {
 }
 
 func bet(g *Game, pn uint, data uint) error {
-
 	if !g.getBetting() {
 		return ErrIllegalAction
 	}

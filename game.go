@@ -151,7 +151,7 @@ func (g *Game) readyCount() uint {
 }
 
 func (g *Game) isCalled(pn uint) bool {
-	return g.players[pn].allIn() || (g.players[pn].Called)
+	return g.players[pn].allIn(g.getStage()) || (g.players[pn].Called)
 }
 
 //Returns nil if there are more than 2 players ready, ErrIllegalAction otherwise
@@ -211,16 +211,15 @@ func (g *Game) canOpen(pn uint) bool {
 }
 
 func (g *Game) resetForNextHand() {
-
 	for i := range g.players {
 		g.players[i].Bet = 0
 		g.players[i].TotalBet = 0
+		g.players[i].PreviouslyIn = g.players[i].In
 
 		if g.players[i].Stack == 0 {
 			g.players[i].In = false
 			g.players[i].Ready = false
 		}
-
 	}
 
 	g.dealerNum = (g.dealerNum + 1) % uint(len(g.players))
@@ -244,7 +243,7 @@ func (g *Game) updateRoundInfo() {
 	for i, p := range g.players {
 		if p.In {
 			inPlayerNums = append(inPlayerNums, uint(i))
-			if p.allIn() {
+			if p.allIn(g.getStage()) {
 				allInPlayerNums = append(allInPlayerNums, uint(i))
 			} else if !g.isCalled(uint(i)) {
 				allCalled = false
@@ -289,7 +288,7 @@ func (g *Game) updateRoundInfo() {
 
 	for i, p := range tmpPlayers {
 		finalPot.Amt += p.TotalBet
-		if p.In && !p.allIn() {
+		if p.In && !p.allIn(g.getStage()) {
 			finalPot.EligiblePlayerNums = append(finalPot.EligiblePlayerNums, uint(i))
 		}
 	}
@@ -343,6 +342,9 @@ func (g *Game) updateRoundInfo() {
 
 	//If there are two or more players in, and everybody has called or is all in, then end the hand f we've just finished river betting
 	if g.getStage() == River {
+		for i := range g.players {
+			g.players[i].PreviouslyAllIn = g.players[i].allIn(River)
+		}
 
 		for i := range g.pots {
 			g.pots[i].WinningScore = 8000
