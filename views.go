@@ -149,7 +149,7 @@ func (g *Game) GeneratePlayerView(pn uint) *GameView {
 	}
 
 	showAll := allInCount == inCount
-	if betCount == 0 {
+	if !showAll && betCount == 0 {
 		// if we are at the beginning of the betting round
 		// and all but one player is all-in, show all the cards
 		showAll = allInCount == (inCount - 1)
