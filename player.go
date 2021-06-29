@@ -28,19 +28,33 @@ import (
 )
 
 type Player struct {
-	Ready      bool
-	In         bool
-	Called     bool
-	Left       bool
-	TotalBuyIn uint
-	Stack      uint
-	Bet        uint
-	TotalBet   uint
-	Cards      [2]Card
+	Ready           bool
+	In              bool
+	Called          bool
+	Left            bool
+	TotalBuyIn      uint
+	Stack           uint
+	Bet             uint
+	TotalBet        uint
+	Cards           [2]Card
+	PreviouslyIn    bool
+	PreviouslyAllIn bool
 }
 
-func (p *Player) allIn() bool {
-	return p.In && (p.Stack == 0)
+func (p *Player) in(stage GameStage) bool {
+	if stage == PreDeal {
+		return p.PreviouslyIn
+	}
+
+	return p.In
+}
+
+func (p *Player) allIn(stage GameStage) bool {
+	if stage == PreDeal {
+		return p.PreviouslyAllIn
+	}
+
+	return p.in(stage) && (p.Stack == 0)
 }
 
 func (p *Player) initialize() {
@@ -48,8 +62,8 @@ func (p *Player) initialize() {
 
 	p.Ready = false
 	p.In = false
+	p.PreviouslyIn = false
 	p.Called = false
-
 }
 
 //putInChips is simply a helper function that transfers the amounts between fields

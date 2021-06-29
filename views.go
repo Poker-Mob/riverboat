@@ -129,32 +129,43 @@ func (g *Game) GeneratePlayerView(pn uint) *GameView {
 
 	allInCount := 0
 	inCount := 0
+	betCount := 0
 
 	for i, p := range g.players {
 		if uint(i) != pn {
 			hideCards(uint(i))
 		}
 
-		if p.allIn() {
+		if p.allIn(gv.Stage) {
 			allInCount++
 		}
 
-		if p.In {
+		if p.in(gv.Stage) {
 			inCount++
+			if p.Bet > 0 {
+				betCount++
+			}
 		}
 	}
 
-	// If in a heads-up situation
-	if allInCount == inCount {
+	showAll := allInCount == inCount
+	if betCount == 0 {
+		// if we are at the beginning of the betting round
+		// and all but one player is all-in, show all the cards
+		showAll = allInCount == (inCount - 1)
+	}
+
+	if showAll {
 		for i, p := range g.players {
-			if p.In {
+			if p.in(gv.Stage) {
 				showCards(uint(i))
 			}
 		}
 	}
 
-	if g.getStage() == PreDeal && inCount > 1 {
+	if g.getStage() == PreDeal {
 		showCards(g.calledNum)
+
 		_, scoreToBeat := BestFiveOfSeven(
 			g.players[g.calledNum].Cards[0],
 			g.players[g.calledNum].Cards[1],
@@ -184,7 +195,6 @@ func (g *Game) GeneratePlayerView(pn uint) *GameView {
 		}
 
 		for _, pot := range g.pots {
-
 			for _, j := range pot.WinningPlayerNums {
 				showCards(j)
 			}
