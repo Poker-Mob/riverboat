@@ -142,7 +142,7 @@ func (g *Game) GeneratePlayerView(pn uint) *GameView {
 
 		if p.in(gv.Stage) {
 			inCount++
-			if p.Bet > 0 {
+			if p.bet(gv.Stage) > 0 {
 				betCount++
 			}
 		}
@@ -163,7 +163,7 @@ func (g *Game) GeneratePlayerView(pn uint) *GameView {
 		}
 	}
 
-	if g.getStage() == PreDeal {
+	if g.getStage() == PreDeal && inCount > 1 {
 		showCards(g.calledNum)
 
 		_, scoreToBeat := BestFiveOfSeven(
