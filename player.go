@@ -39,6 +39,7 @@ type Player struct {
 	Cards           [2]Card
 	PreviouslyIn    bool
 	PreviouslyAllIn bool
+	PreviousBet     uint
 }
 
 func (p *Player) in(stage GameStage) bool {
@@ -55,6 +56,14 @@ func (p *Player) allIn(stage GameStage) bool {
 	}
 
 	return p.in(stage) && (p.Stack == 0)
+}
+
+func (p *Player) bet(stage GameStage) uint {
+	if stage == PreDeal {
+		return p.PreviousBet
+	}
+
+	return p.Bet
 }
 
 func (p *Player) initialize() {

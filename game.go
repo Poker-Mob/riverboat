@@ -212,9 +212,10 @@ func (g *Game) canOpen(pn uint) bool {
 
 func (g *Game) resetForNextHand() {
 	for i := range g.players {
+		g.players[i].PreviousBet = g.players[i].Bet
+		g.players[i].PreviouslyIn = g.players[i].In
 		g.players[i].Bet = 0
 		g.players[i].TotalBet = 0
-		g.players[i].PreviouslyIn = g.players[i].In
 
 		if g.players[i].Stack == 0 {
 			g.players[i].In = false
