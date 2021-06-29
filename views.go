@@ -133,10 +133,6 @@ func (g *Game) GeneratePlayerView(pn uint) *GameView {
 	for i, p := range g.players {
 		if uint(i) != pn {
 			hideCards(uint(i))
-		} else {
-			if !g.players[pn].In {
-				hideCards(uint(i))
-			}
 		}
 
 		if p.allIn() {
