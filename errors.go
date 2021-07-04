@@ -40,3 +40,5 @@ var ErrNotEnoughPlayers = errors.New("need more players to start the round")
 */
 
 var errInternalBadGameStage = errors.New("internal error: bad game stage")
+
+var ErrNoValidDealer = errors.New("No valid dealer found")
