@@ -108,9 +108,7 @@ func bet(g *Game, pn uint, data uint) error {
 	g.players[pn].putInChips(betVal)
 	g.players[pn].Called = true
 
-	g.updateRoundInfo()
-
-	return nil
+	return g.updateRoundInfo()
 }
 
 // BuyIn buys more chips for the player. For BuyIn, data is the amount to buy in for.
@@ -276,10 +274,7 @@ func fold(g *Game, pn uint, data uint) error {
 
 	p.In = false
 
-	g.updateRoundInfo()
-
-	return nil
-
+	return g.updateRoundInfo()
 }
 
 // Leave marks a player as having left the game. This is essentially the same as marking a player
@@ -337,7 +332,9 @@ func toggleReady(g *Game, pn uint, data uint) error {
 	}
 
 	if pn == g.dealerNum {
-		g.ensureValidDealer()
+		if err := g.ensureValidDealer(); err != nil {
+			return err
+		}
 	}
 
 	if stage == PreDeal {
@@ -360,7 +357,10 @@ func start(g *Game, pn uint, data uint) error {
 		return ErrIllegalAction
 	}
 
-	g.ensureValidDealer()
+	if err := g.ensureValidDealer(); err != nil {
+		return err
+	}
+
 	g.updateBlindNums()
 	return nil
 }

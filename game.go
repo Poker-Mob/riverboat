@@ -210,7 +210,7 @@ func (g *Game) canOpen(pn uint) bool {
 	return true
 }
 
-func (g *Game) resetForNextHand() {
+func (g *Game) resetForNextHand() error {
 	for i := range g.players {
 		g.players[i].PreviousBet = g.players[i].Bet
 		g.players[i].PreviouslyIn = g.players[i].In
@@ -224,18 +224,27 @@ func (g *Game) resetForNextHand() {
 	}
 
 	g.dealerNum = (g.dealerNum + 1) % uint(len(g.players))
-	g.ensureValidDealer()
+	if err := g.ensureValidDealer(); err != nil {
+		return err
+	}
 
 	g.setStageAndBetting(PreDeal, false)
+	return nil
 }
 
-func (g *Game) ensureValidDealer() {
+func (g *Game) ensureValidDealer() error {
+	start := g.dealerNum
 	for !g.players[g.dealerNum].Ready {
 		g.dealerNum = (g.dealerNum + 1) % uint(len(g.players))
+		if g.dealerNum == start {
+			return ErrNoValidDealer
+		}
 	}
+
+	return nil
 }
 
-func (g *Game) updateRoundInfo() {
+func (g *Game) updateRoundInfo() error {
 
 	var allCalled = true
 	var allInPlayerNums = []uint{}
@@ -305,9 +314,7 @@ func (g *Game) updateRoundInfo() {
 			g.players[inPlayerNums[0]].Stack += p.TotalBet
 		}
 
-		g.resetForNextHand()
-
-		return
+		return g.resetForNextHand()
 	}
 
 	// If two or more players are in, but not everybody has called
@@ -317,7 +324,7 @@ func (g *Game) updateRoundInfo() {
 			g.actionNum = (g.actionNum + 1) % uint(len(g.players))
 		}
 
-		return
+		return nil
 	}
 
 	//If there are two or more players in, and everybody has either called or is all-in, and at this point we determine that only one player is
@@ -377,15 +384,13 @@ func (g *Game) updateRoundInfo() {
 			}
 		}
 
-		g.resetForNextHand()
-
-		// otherwise, just set betting to false so the dealer can deal the next part of the hand
-	} else {
-		g.setBetting(false)
-		deal(g, g.dealerNum, 0)
+		return g.resetForNextHand()
 	}
-	return
 
+	// otherwise, just set betting to false so the dealer can deal the next part of the hand
+	g.setBetting(false)
+	deal(g, g.dealerNum, 0)
+	return nil
 }
 
 var defaultConfig = GameConfig{
