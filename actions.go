@@ -283,15 +283,13 @@ func fold(g *Game, pn uint, data uint) error {
 func Leave(g *Game, pn uint, data uint) error {
 	g.mtx.Lock()
 	defer g.mtx.Unlock()
-	return toggleReady(g, pn, data)
+	return leave(g, pn, data)
 }
 
 func leave(g *Game, pn uint, data uint) error {
 	p := g.getPlayer(pn)
-	var err error
-
 	if p.Ready {
-		err = toggleReady(g, pn, data)
+		err := toggleReady(g, pn, data)
 		if err != nil {
 			return err
 		}
