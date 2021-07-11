@@ -94,9 +94,6 @@ func copyPots(src []Pot) []Pot {
 
 // FillFromView is primarily for loading a stored view from a persistence layer
 func (g *Game) FillFromView(gv *GameView) {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-
 	g.dealerNum = gv.DealerNum
 	g.actionNum = gv.ActionNum
 	g.utgNum = gv.UTGNum
@@ -116,9 +113,6 @@ func (g *Game) FillFromView(gv *GameView) {
 // GeneratePlayerView is primarily for creating a view that can be serialized for delivery to a specific player
 // The generated view holds only the information that the player denoted by pn is entitled to see at the moment it is generated.
 func (g *Game) GeneratePlayerView(pn uint) *GameView {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-
 	gv := g.copyToView()
 	gv.Deck = nil
 	gv.Config.Seed = 0
@@ -207,9 +201,5 @@ func (g *Game) GeneratePlayerView(pn uint) *GameView {
 // GenerateOmniView is primarily for creating a view that can be serialized for delivery to a persistance layer, like a db or in-memory store
 // Nothing is censored, not even the contents of the deck
 func (g *Game) GenerateOmniView() *GameView {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-
 	return g.copyToView()
-
 }

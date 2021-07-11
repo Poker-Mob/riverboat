@@ -27,7 +27,6 @@ import (
 	"math"
 	"math/rand"
 	"sort"
-	"sync"
 	"time"
 
 	. "github.com/alexclewontin/riverboat/eval"
@@ -89,8 +88,6 @@ type GameConfig struct {
 // and will generate views of itself upon request. Games should not be initialized directly, only
 // through the NewGame factory function.
 type Game struct {
-	mtx sync.Mutex
-
 	dealerNum      uint
 	actionNum      uint
 	utgNum         uint
@@ -389,7 +386,7 @@ func (g *Game) updateRoundInfo() error {
 
 	// otherwise, just set betting to false so the dealer can deal the next part of the hand
 	g.setBetting(false)
-	deal(g, g.dealerNum, 0)
+	Deal(g, g.dealerNum, 0)
 	return nil
 }
 
