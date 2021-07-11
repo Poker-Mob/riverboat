@@ -29,7 +29,7 @@ import (
 	"reflect"
 	"testing"
 
-	. "github.com/alexclewontin/riverboat/eval"
+	"github.com/alexclewontin/riverboat/eval"
 )
 
 func TestGame_GenerateOmniView_Driver(t *testing.T) {
@@ -45,11 +45,11 @@ func TestGame_GenerateOmniView(t *testing.T) {
 		UTGNum         uint
 		SBNum          uint
 		BBNum          uint
-		CommunityCards []Card
+		CommunityCards []eval.Card
 		Flags          gameFlags
 		Config         GameConfig
 		Players        []Player
-		Deck           Deck
+		Deck           eval.Deck
 		Pots           []Pot
 		MinRaise       uint
 	}
@@ -66,7 +66,7 @@ func TestGame_GenerateOmniView(t *testing.T) {
 				UTGNum:    5,
 				SBNum:     6,
 				BBNum:     7,
-				CommunityCards: []Card{
+				CommunityCards: []eval.Card{
 					8394515,
 					16783383,
 					33564957,
@@ -76,7 +76,7 @@ func TestGame_GenerateOmniView(t *testing.T) {
 				Flags:    9,
 				Config:   GameConfig{},
 				Players:  []Player{},
-				Deck:     DefaultDeck,
+				Deck:     eval.DefaultDeck,
 				Pots:     []Pot{},
 				MinRaise: 25,
 			},
@@ -86,7 +86,7 @@ func TestGame_GenerateOmniView(t *testing.T) {
 				UTGNum:    5,
 				SBNum:     6,
 				BBNum:     7,
-				CommunityCards: []Card{
+				CommunityCards: []eval.Card{
 					8394515,
 					16783383,
 					33564957,
@@ -97,7 +97,7 @@ func TestGame_GenerateOmniView(t *testing.T) {
 				Betting:  true,
 				Config:   GameConfig{},
 				Players:  []Player{},
-				Deck:     DefaultDeck,
+				Deck:     eval.DefaultDeck,
 				Pots:     []Pot{},
 				MinRaise: 25,
 			},
@@ -141,7 +141,7 @@ func TestGame_GenerateOmniViewChangedVals(t *testing.T) {
 				utgNum:    5,
 				sbNum:     6,
 				bbNum:     7,
-				communityCards: []Card{
+				communityCards: []eval.Card{
 					8394515,
 					16783383,
 					33564957,
@@ -161,25 +161,25 @@ func TestGame_GenerateOmniViewChangedVals(t *testing.T) {
 						Stack:      105,
 						Bet:        10,
 						TotalBet:   20,
-						Cards: [2]Card{
+						Cards: [2]eval.Card{
 							33564957,
 							67115551,
 						},
 					},
 				},
-				deck: DefaultDeck,
+				deck: eval.DefaultDeck,
 				pots: []Pot{
 					{
 						TopShare:           100,
 						Amt:                1000,
 						EligiblePlayerNums: []uint{0, 1, 2, 3},
 						WinningPlayerNums:  []uint{2},
-						WinningHand: []Card{
-							MustParseCardString("AS"),
-							MustParseCardString("KS"),
-							MustParseCardString("QS"),
-							MustParseCardString("JS"),
-							MustParseCardString("TS"),
+						WinningHand: []eval.Card{
+							eval.MustParseCardString("AS"),
+							eval.MustParseCardString("KS"),
+							eval.MustParseCardString("QS"),
+							eval.MustParseCardString("JS"),
+							eval.MustParseCardString("TS"),
 						},
 						WinningScore: 1,
 					},
@@ -192,7 +192,7 @@ func TestGame_GenerateOmniViewChangedVals(t *testing.T) {
 				utgNum:    5,
 				sbNum:     6,
 				bbNum:     7,
-				communityCards: []Card{
+				communityCards: []eval.Card{
 					8394515,
 					16783383,
 					33564957,
@@ -212,25 +212,25 @@ func TestGame_GenerateOmniViewChangedVals(t *testing.T) {
 						Stack:      105,
 						Bet:        10,
 						TotalBet:   20,
-						Cards: [2]Card{
+						Cards: [2]eval.Card{
 							33564957,
 							67115551,
 						},
 					},
 				},
-				deck: DefaultDeck,
+				deck: eval.DefaultDeck,
 				pots: []Pot{
 					{
 						TopShare:           100,
 						Amt:                1000,
 						EligiblePlayerNums: []uint{0, 1, 2, 3},
 						WinningPlayerNums:  []uint{2},
-						WinningHand: []Card{
-							MustParseCardString("AS"),
-							MustParseCardString("KS"),
-							MustParseCardString("QS"),
-							MustParseCardString("JS"),
-							MustParseCardString("TS"),
+						WinningHand: []eval.Card{
+							eval.MustParseCardString("AS"),
+							eval.MustParseCardString("KS"),
+							eval.MustParseCardString("QS"),
+							eval.MustParseCardString("JS"),
+							eval.MustParseCardString("TS"),
 						},
 						WinningScore: 1,
 					},

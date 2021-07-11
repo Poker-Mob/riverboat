@@ -26,7 +26,7 @@ package riverboat
 import (
 	"math/rand"
 
-	. "github.com/alexclewontin/riverboat/eval"
+	"github.com/alexclewontin/riverboat/eval"
 )
 
 // GameView is the type that represents a snapshot of a Game's state.
@@ -37,12 +37,12 @@ type GameView struct {
 	SBNum          uint
 	BBNum          uint
 	CalledNum      uint
-	CommunityCards []Card
+	CommunityCards []eval.Card
 	Stage          GameStage
 	Betting        bool
 	Config         GameConfig
 	Players        []Player
-	Deck           Deck
+	Deck           eval.Deck
 	Pots           []Pot
 	MinRaise       uint
 	ReadyCount     uint
@@ -63,12 +63,12 @@ func (g *Game) copyToView() *GameView {
 		UTGNum:         g.utgNum,
 		SBNum:          g.sbNum,
 		BBNum:          g.bbNum,
-		CommunityCards: append([]Card{}, g.communityCards...),
+		CommunityCards: append([]eval.Card{}, g.communityCards...),
 		Stage:          g.getStage(),
 		Betting:        g.getBetting(),
 		Config:         g.config,
 		Players:        append([]Player{}, g.players...),
-		Deck:           append([]Card{}, g.deck...),
+		Deck:           append([]eval.Card{}, g.deck...),
 		Pots:           copyPots(g.pots),
 		MinRaise:       g.minRaise,
 		ReadyCount:     g.readyCount(),
@@ -86,7 +86,7 @@ func copyPots(src []Pot) []Pot {
 		ret[i].WinningScore = src[i].WinningScore
 		ret[i].EligiblePlayerNums = append([]uint{}, src[i].EligiblePlayerNums...)
 		ret[i].WinningPlayerNums = append([]uint{}, src[i].WinningPlayerNums...)
-		ret[i].WinningHand = append([]Card{}, src[i].WinningHand...)
+		ret[i].WinningHand = append([]eval.Card{}, src[i].WinningHand...)
 	}
 
 	return ret
@@ -99,11 +99,11 @@ func (g *Game) FillFromView(gv *GameView) {
 	g.utgNum = gv.UTGNum
 	g.bbNum = gv.BBNum
 	g.sbNum = gv.SBNum
-	g.communityCards = append([]Card{}, gv.CommunityCards...)
+	g.communityCards = append([]eval.Card{}, gv.CommunityCards...)
 	g.setStageAndBetting(gv.Stage, gv.Betting)
 	g.config = gv.Config
 	g.players = append([]Player{}, gv.Players...)
-	g.deck = append([]Card{}, gv.Deck...)
+	g.deck = append([]eval.Card{}, gv.Deck...)
 	g.pots = copyPots(gv.Pots)
 	g.minRaise = gv.MinRaise
 	g.rand = rand.New(rand.NewSource(g.config.Seed))
@@ -118,8 +118,8 @@ func (g *Game) GeneratePlayerView(pn uint) *GameView {
 	gv.Config.Seed = 0
 
 	// D. R. Y.!
-	hideCards := func(pn2 uint) { gv.Players[pn2].Cards = [2]Card{0, 0} }
-	showCards := func(pn2 uint) { gv.Players[pn2].Cards = [2]Card{g.players[pn2].Cards[0], g.players[pn2].Cards[1]} }
+	hideCards := func(pn2 uint) { gv.Players[pn2].Cards = [2]eval.Card{0, 0} }
+	showCards := func(pn2 uint) { gv.Players[pn2].Cards = [2]eval.Card{g.players[pn2].Cards[0], g.players[pn2].Cards[1]} }
 
 	allInCount := 0
 	inCount := 0
@@ -160,7 +160,7 @@ func (g *Game) GeneratePlayerView(pn uint) *GameView {
 	if g.getStage() == PreDeal && inCount > 1 {
 		showCards(g.calledNum)
 
-		_, scoreToBeat := BestFiveOfSeven(
+		_, scoreToBeat := eval.BestFiveOfSeven(
 			g.players[g.calledNum].Cards[0],
 			g.players[g.calledNum].Cards[1],
 			g.communityCards[0],
@@ -172,7 +172,7 @@ func (g *Game) GeneratePlayerView(pn uint) *GameView {
 
 		for i := range g.players {
 			pni := (g.calledNum + uint(i)) % uint(len(g.players))
-			_, iScore := BestFiveOfSeven(
+			_, iScore := eval.BestFiveOfSeven(
 				g.players[pni].Cards[0],
 				g.players[pni].Cards[1],
 				g.communityCards[0],

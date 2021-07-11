@@ -24,7 +24,7 @@
 package riverboat
 
 import (
-	. "github.com/alexclewontin/riverboat/eval"
+	"github.com/alexclewontin/riverboat/eval"
 )
 
 type Player struct {
@@ -36,7 +36,7 @@ type Player struct {
 	Stack           uint
 	Bet             uint
 	TotalBet        uint
-	Cards           [2]Card
+	Cards           [2]eval.Card
 	PreviouslyIn    bool
 	PreviouslyAllIn bool
 	PreviousBet     uint
