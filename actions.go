@@ -46,12 +46,6 @@ type Action func(g *Game, pn uint, data uint) error
 // the value passed to data does not constitute a legal bet, Bet will return an error value. If bet is successful,
 // it will return nil.
 func Bet(g *Game, pn uint, data uint) error {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	return bet(g, pn, data)
-}
-
-func bet(g *Game, pn uint, data uint) error {
 	if !g.getBetting() {
 		return ErrIllegalAction
 	}
@@ -115,12 +109,6 @@ func bet(g *Game, pn uint, data uint) error {
 // BuyIn will return an error if the player attempting it is in the current round, or if
 // the buy would cause the player's stack to exceed the maximum configured buy in.
 func BuyIn(g *Game, pn uint, data uint) error {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	return buyIn(g, pn, data)
-}
-
-func buyIn(g *Game, pn uint, data uint) error {
 	p := g.getPlayer(pn)
 
 	//Can't buy in while playing
@@ -149,12 +137,6 @@ func buyIn(g *Game, pn uint, data uint) error {
 // so calling Deal during stage River will result in an error.
 // Deal ignores the value passed in as data.
 func Deal(g *Game, pn uint, data uint) error {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	return deal(g, pn, data)
-}
-
-func deal(g *Game, pn uint, data uint) error {
 	if pn != g.dealerNum {
 		return ErrIllegalAction
 	}
@@ -259,13 +241,6 @@ func deal(g *Game, pn uint, data uint) error {
 // players have called) or terminating the hand (if after folding, only one other player is in).
 // Fold ignores the value passed in as data
 func Fold(g *Game, pn uint, data uint) error {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	return fold(g, pn, data)
-}
-
-func fold(g *Game, pn uint, data uint) error {
-
 	p := g.getPlayer(pn)
 
 	if g.actionNum != pn {
@@ -281,15 +256,9 @@ func fold(g *Game, pn uint, data uint) error {
 // "not ready" (see ToggleReady) except it also marks the player as "left", which provides a distinct
 // state (e.g. so that frontends can render "left" players and "not ready" players differently)
 func Leave(g *Game, pn uint, data uint) error {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	return leave(g, pn, data)
-}
-
-func leave(g *Game, pn uint, data uint) error {
 	p := g.getPlayer(pn)
 	if p.Ready {
-		err := toggleReady(g, pn, data)
+		err := ToggleReady(g, pn, data)
 		if err != nil {
 			return err
 		}
@@ -305,12 +274,6 @@ func leave(g *Game, pn uint, data uint) error {
 // ToggleReady will return an error. If the player attempting it has no money, ToggleReady will return an error.
 // ToggleReady ignores the value passed in as data.
 func ToggleReady(g *Game, pn uint, data uint) error {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	return toggleReady(g, pn, data)
-}
-
-func toggleReady(g *Game, pn uint, data uint) error {
 	p := g.getPlayer(pn)
 	stage := g.getStage()
 
@@ -345,8 +308,6 @@ func toggleReady(g *Game, pn uint, data uint) error {
 }
 
 func Start(g *Game, pn uint, data uint) error {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
 	return start(g, pn, data)
 }
 
