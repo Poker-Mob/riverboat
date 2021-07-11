@@ -29,7 +29,7 @@ import (
 	"sort"
 	"time"
 
-	. "github.com/alexclewontin/riverboat/eval"
+	"github.com/alexclewontin/riverboat/eval"
 )
 
 // (52 - 5) / 2. I mean, if you really want to...
@@ -73,7 +73,7 @@ type Pot struct {
 	Amt                uint
 	EligiblePlayerNums []uint
 	WinningPlayerNums  []uint
-	WinningHand        []Card
+	WinningHand        []eval.Card
 	WinningScore       int
 }
 
@@ -93,11 +93,11 @@ type Game struct {
 	utgNum         uint
 	sbNum          uint
 	bbNum          uint
-	communityCards []Card
+	communityCards []eval.Card
 	flags          gameFlags
 	config         GameConfig
 	players        []Player
-	deck           Deck
+	deck           eval.Deck
 	pots           []Pot
 	minRaise       uint
 	calledNum      uint
@@ -356,7 +356,7 @@ func (g *Game) updateRoundInfo() error {
 
 			for _, num := range g.pots[i].EligiblePlayerNums {
 
-				hand, score := BestFiveOfSeven(
+				hand, score := eval.BestFiveOfSeven(
 					g.players[num].Cards[0],
 					g.players[num].Cards[1],
 					g.communityCards[0],
@@ -412,8 +412,8 @@ func NewGame(config *GameConfig) *Game {
 	newGame := Game{}
 
 	newGame.setStageAndBetting(PreDeal, false)
-	newGame.deck = DefaultDeck
-	newGame.communityCards = make([]Card, 5)
+	newGame.deck = eval.DefaultDeck
+	newGame.communityCards = make([]eval.Card, 5)
 
 	if config == nil {
 		newGame.config = defaultConfig
