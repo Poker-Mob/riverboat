@@ -181,6 +181,10 @@ func Deal(g *Game, pn uint, data uint) error {
 		g.advanceRand()
 
 		for i, p := range g.players {
+			g.players[i].PreviousBet = 0
+			g.players[i].PreviouslyIn = false
+			g.players[i].PreviouslyAllIn = false
+
 			if p.Ready {
 				g.players[i].Cards[0] = g.deck.Pop()
 				g.players[i].Cards[1] = g.deck.Pop()
